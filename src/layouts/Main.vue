@@ -1,11 +1,11 @@
 <template>
   <v-container class="flex-1-0">
-    <div>{{ appStore.errors[0] }}</div>
+    <ServiceMessageQueue></ServiceMessageQueue>
     <v-row class="h-100">
       <v-col cols="3">
         <h2 class="mb-4">Wallet</h2>
         <v-card
-            v-if="!$web3Service.getWeb3()"
+            v-if="!web3Ready"
             title="Connect"
             variant="tonal"
             color="surface-variant"
@@ -39,7 +39,8 @@
 
 <script lang="ts">
 import {defineComponent} from "vue"
-import {useAppStore} from "../stores/app";
+import {useMainStore} from "../stores/main";
+import {mapActions, mapState, mapWritableState} from "pinia";
 
 
 
@@ -54,16 +55,19 @@ export default defineComponent({
           description: 'Simple storage',
         }
       ],
-      errorMessage: ''
     }
   },
   methods: {
+    ...mapActions(useMainStore, ['pushServiceMessage']),
     async connectWeb3() {
-      const initWeb3 = this.$web3Service.initWeb3()
+      const initWeb3 = await this.$web3Service.initWeb3()
 
       if (initWeb3 !== true) {
-        this.appStore.pushErrorMessage(initWeb3.message)
+        this.pushServiceMessage(initWeb3)
+        return
       }
+
+      this.web3Ready = true
 
       const web3 = this.$web3Service.getWeb3()
       if (web3 === true) {
@@ -71,14 +75,13 @@ export default defineComponent({
         console.log(accounts)
         // this.currentAccount = accounts[0];
       } else {
-
+        //
       }
     }
   },
   computed: {
-    appStore() {
-      return useAppStore()
-    }
-  }
+    ...mapState(useMainStore, ['errors']),
+    ...mapWritableState(useMainStore, ['web3Ready'])
+  },
 })
 </script>

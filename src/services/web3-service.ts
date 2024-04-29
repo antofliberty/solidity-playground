@@ -1,10 +1,5 @@
 import Web3 from 'web3';
-
-type ServiceMessage = {
-    code: number,
-    message: string,
-    details?: object
-}
+import {ServiceMessage} from "../types";
 
 class Web3Service {
     web3: Web3 | null = null;
@@ -13,30 +8,32 @@ class Web3Service {
         // this.initWeb3();
     }
 
-    public initWeb3(): true | ServiceMessage {
+    public async initWeb3(): Promise<boolean | ServiceMessage> {
         // Check for injected web3 (i.e., MetaMask).
         if ((window as any).ethereum) {
             this.web3 = new Web3((window as any).ethereum);
             try {
                 // Request account access if needed
-                (window as any).ethereum.enable().then(() => {
-                    return true
-                });
+                await (window as any).ethereum.enable()
+                return true
             } catch (error) {
-                return {
+                return new ServiceMessage({
                     code: 1,
-                    message: "Access denied for web3."
-                }
+                    message: "Access denied for web3.",
+                    type: 'error'
+                })
             }
         } else if ((window as any).web3) {
             // Legacy dapp browsers...
             this.web3 = new Web3((window as any).web3.currentProvider);
+            return true; // Assume it is initialized properly
         } else {
             // Non-dapp browsers or no provider found.
-            return {
+            return new ServiceMessage({
                 code: 2,
-                message: 'Non-Ethereum browser detected. Consider trying MetaMask!'
-            }
+                message: 'Non-Ethereum browser detected. Consider trying MetaMask!',
+                type: 'error'
+            })
         }
     }
 
