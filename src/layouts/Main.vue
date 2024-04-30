@@ -26,7 +26,7 @@
               color="surface-variant"
               link
               :to="{ name: 'Contract', params: { id: contract.id } }"
-              disabled
+              :disabled="!web3Ready"
           ></v-card>
         </div>
       </v-col>
@@ -40,7 +40,7 @@
 <script lang="ts">
 import {defineComponent} from "vue"
 import {useMainStore} from "../stores/main";
-import {mapActions, mapState, mapWritableState} from "pinia";
+import {mapActions, mapWritableState} from "pinia";
 
 
 
@@ -80,7 +80,6 @@ export default defineComponent({
     }
   },
   computed: {
-    ...mapState(useMainStore, ['errors']),
     ...mapWritableState(useMainStore, ['web3Ready'])
   },
 })

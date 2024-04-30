@@ -16,6 +16,9 @@
 
 import {defineComponent} from "vue";
 import SimpleStorage from "../contracts/SimpleStorage.sol?raw"
+import Prism from 'prismjs';
+import 'prismjs/themes/prism-tomorrow.css'
+import 'prismjs/components/prism-solidity'
 
 export default defineComponent({
   name: "Contract",
@@ -25,6 +28,10 @@ export default defineComponent({
         storage: SimpleStorage,
       }
     }
+  },
+  mounted() {
+    Prism.highlightAll()
+  },
   }
 })
 
