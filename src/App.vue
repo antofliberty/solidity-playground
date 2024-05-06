@@ -13,12 +13,12 @@
 
 <script lang="ts">
 import {defineComponent} from "vue"
-// import {useAppStore} from "./stores/app"
+import {useMainStore} from "./stores/main";
 
-defineComponent({
-  mounted() {
-    // const appStore = useAppStore()
-    // appStore.initWeb3()
+export default defineComponent({
+  beforeMount() {
+    const mainStore = useMainStore()
+    mainStore.initApp()
   },
 })
 

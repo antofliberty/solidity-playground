@@ -58,21 +58,24 @@ export default defineComponent({
     }
   },
   methods: {
-    ...mapActions(useMainStore, ['pushServiceMessage']),
+    ...mapActions(useMainStore, ['pushServiceMessage', 'initWeb3']),
     async connectWeb3() {
-      const initWeb3 = await this.$web3Service.initWeb3()
+      // const initWeb3 = await this.$web3Service.initWeb3()
+      //
+      // if (initWeb3 !== true) {
+      //   this.pushServiceMessage(initWeb3)
+      //   return
+      // }
 
-      if (initWeb3 !== true) {
-        this.pushServiceMessage(initWeb3)
-        return
-      }
+      await this.initWeb3()
 
+      localStorage.setItem('web3-connected-before', 'true')
       this.web3Ready = true
 
       const web3 = this.$web3Service.getWeb3()
       if (web3 === true) {
-        const accounts = await web3.eth.getAccounts()
-        console.log(accounts)
+        // const accounts = await web3.eth.getAccounts()
+        // console.log(accounts)
         // this.currentAccount = accounts[0];
       } else {
         //

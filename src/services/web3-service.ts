@@ -1,14 +1,14 @@
 import Web3 from 'web3';
 import {ServiceMessage} from "../types";
 
-class Web3Service {
+export class Web3Service {
     web3: Web3 | null = null;
 
     constructor() {
         // this.initWeb3();
     }
 
-    public async initWeb3(): Promise<boolean | ServiceMessage> {
+    public async initWeb3(): Promise<true | ServiceMessage> {
         // Check for injected web3 (i.e., MetaMask).
         if ((window as any).ethereum) {
             this.web3 = new Web3((window as any).ethereum);
