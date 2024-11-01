@@ -10,11 +10,14 @@ export class Web3Service {
 
     public async initWeb3(): Promise<true | ServiceMessage> {
         // Check for injected web3 (i.e., MetaMask).
+
         if ((window as any).ethereum) {
-            this.web3 = new Web3((window as any).ethereum);
+            // this.web3 = new Web3((window as any).ethereum);
+            this.web3 = new Web3(`https://sepolia.infura.io/v3/${import.meta.env.VITE_INFURA_PROJECT_ID}`)
+
             try {
                 // Request account access if needed
-                await (window as any).ethereum.enable()
+                await window.ethereum.request({ method: 'eth_requestAccounts' })
                 return true
             } catch (error) {
                 return new ServiceMessage({
