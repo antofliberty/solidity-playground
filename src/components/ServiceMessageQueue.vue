@@ -24,7 +24,7 @@
 <script lang="ts">
 import {defineComponent} from 'vue'
 import {mapActions, mapState} from "pinia";
-import {useMainStore} from "../stores/main";
+import {useMainStore} from "@/stores/main";
 
 export default defineComponent({
   name: "ServiceMessageQueue",

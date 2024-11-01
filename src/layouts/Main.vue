@@ -55,7 +55,7 @@
 
 <script lang="ts">
 import {defineComponent} from "vue"
-import {useMainStore} from "../stores/main";
+import {useMainStore} from "@/stores/main";
 import {mapActions, mapState, mapWritableState} from "pinia";
 
 export default defineComponent({
