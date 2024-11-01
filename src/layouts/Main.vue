@@ -3,7 +3,11 @@
     <ServiceMessageQueue></ServiceMessageQueue>
     <v-row class="h-100">
       <v-col cols="3">
-        <h2 class="mb-4">Wallet</h2>
+        <div class="d-flex justify-space-between">
+          <h2 class="mb-4">Wallet</h2>
+          <v-chip v-if="web3Ready" color="success">Connected</v-chip>
+          <v-chip v-else color="error">Web3 disabled</v-chip>
+        </div>
         <v-card
             v-if="!web3Ready"
             title="Connect"
@@ -14,6 +18,18 @@
             @click="connectWeb3"
         >
         </v-card>
+
+        <v-card
+            v-else
+            title="Addresses"
+            variant="tonal"
+            color="surface-variant"
+        >
+          <v-card-text>
+            <v-list :items="accounts"></v-list>
+          </v-card-text>
+        </v-card>
+
 
         <h2 class="my-4">Contracts</h2>
         <div class="d-flex flex-column ga-5">
@@ -40,14 +56,13 @@
 <script lang="ts">
 import {defineComponent} from "vue"
 import {useMainStore} from "../stores/main";
-import {mapActions, mapWritableState} from "pinia";
-
-
+import {mapActions, mapState, mapWritableState} from "pinia";
 
 export default defineComponent({
   name: "MainLayout",
   data() {
     return {
+      accounts: [],
       contracts: [
         {
           id: 'storage',
@@ -60,30 +75,33 @@ export default defineComponent({
   methods: {
     ...mapActions(useMainStore, ['pushServiceMessage', 'initWeb3']),
     async connectWeb3() {
-      // const initWeb3 = await this.$web3Service.initWeb3()
-      //
-      // if (initWeb3 !== true) {
-      //   this.pushServiceMessage(initWeb3)
-      //   return
-      // }
-
       await this.initWeb3()
-
-      localStorage.setItem('web3-connected-before', 'true')
-      this.web3Ready = true
-
-      const web3 = this.$web3Service.getWeb3()
-      if (web3 === true) {
-        // const accounts = await web3.eth.getAccounts()
-        // console.log(accounts)
-        // this.currentAccount = accounts[0];
-      } else {
-        //
-      }
+    },
+    async loadWallet() {
+      this.accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
     }
   },
   computed: {
+    ...mapState(useMainStore, ['web3']),
     ...mapWritableState(useMainStore, ['web3Ready'])
+  },
+  watch: {
+    async web3Ready(ready) {
+      if (ready) {
+        await this.loadWallet()
+      }
+    }
+  },
+  async beforeMount() {
+
   },
 })
 </script>
+
+
+<style>
+  .v-list-item-title {
+    white-space: normal!important;
+    hyphens: unset!important;
+  }
+</style>
